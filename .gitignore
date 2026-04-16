@@ -1,0 +1,10 @@
+node_modules
+.env
+.DS_Store
+artifacts
+cache
+coverage
+apps/api/storage/assets/*
+apps/api/storage/metadata/*
+!apps/api/storage/assets/.gitkeep
+!apps/api/storage/metadata/.gitkeep

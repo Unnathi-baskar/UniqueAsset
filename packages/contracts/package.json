@@ -1,0 +1,19 @@
+{
+  "name": "@marketplace/contracts",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "compile": "CI=true hardhat compile",
+    "test": "CI=true hardhat test",
+    "node": "CI=true hardhat node --hostname 0.0.0.0",
+    "deploy": "CI=true hardhat run scripts/deploy.js --network localhost"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.9.6",
+    "dotenv": "^16.4.5"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.10"
+  }
+}

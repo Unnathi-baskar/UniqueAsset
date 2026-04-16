@@ -1,0 +1,18 @@
+{
+  "name": "digital-asset-marketplace",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "install:all": "npm install --workspaces",
+    "dev:web": "npm run dev --workspace @marketplace/web",
+    "dev:api": "npm run dev --workspace @marketplace/api",
+    "build:web": "npm run build --workspace @marketplace/web",
+    "test:contracts": "npm run test --workspace @marketplace/contracts",
+    "compile:contracts": "npm run compile --workspace @marketplace/contracts",
+    "deploy:contracts": "npm run deploy --workspace @marketplace/contracts"
+  }
+}
