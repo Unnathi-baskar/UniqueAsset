@@ -155,6 +155,8 @@ app.post("/assets/upload", upload.single("file"), (req, res) => {
     creator,
     copyright,
     license,
+    name: title,
+    image: fileUrl,
     fileHash,
     fileName: req.file.originalname,
     fileMimeType: req.file.mimetype,

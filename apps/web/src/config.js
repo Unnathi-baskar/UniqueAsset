@@ -12,11 +12,33 @@ export const CONTRACT_ABI = [
     "anonymous": false,
     "inputs": [
       { "indexed": true, "internalType": "uint256", "name": "tokenId", "type": "uint256" },
+      { "indexed": true, "internalType": "address", "name": "owner", "type": "address" },
+      { "indexed": true, "internalType": "bytes32", "name": "fileHash", "type": "bytes32" },
+      { "indexed": false, "internalType": "string", "name": "tokenURI", "type": "string" },
+      { "indexed": false, "internalType": "string", "name": "category", "type": "string" }
+    ],
+    "name": "TokenMinted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "internalType": "uint256", "name": "tokenId", "type": "uint256" },
       { "indexed": true, "internalType": "address", "name": "buyer", "type": "address" },
       { "indexed": true, "internalType": "address", "name": "seller", "type": "address" },
       { "indexed": false, "internalType": "uint256", "name": "price", "type": "uint256" }
     ],
     "name": "TokenPurchased",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true, "internalType": "address", "name": "from", "type": "address" },
+      { "indexed": true, "internalType": "address", "name": "to", "type": "address" },
+      { "indexed": true, "internalType": "uint256", "name": "tokenId", "type": "uint256" }
+    ],
+    "name": "Transfer",
     "type": "event"
   },
   {

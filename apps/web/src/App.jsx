@@ -219,6 +219,25 @@ export default function App() {
     }
   }
 
+  async function disconnectWallet() {
+    setIsBusy(true);
+
+    try {
+      // Some injected wallets support revoking eth_accounts permission for this site.
+      await injectedProvider?.request?.({
+        method: "wallet_revokePermissions",
+        params: [{ eth_accounts: {} }]
+      });
+    } catch {
+      // Ignore provider-specific revoke failures and still clear local app state.
+    } finally {
+      setWalletAddress("");
+      setWalletBalance("");
+      setStatus("Wallet disconnected in app.");
+      setIsBusy(false);
+    }
+  }
+
   async function loadMarketplace() {
     try {
       const contract = await getReadContract();
@@ -256,6 +275,7 @@ export default function App() {
           fileHash: assetInfo.fileHash,
           category: metadata?.category || assetInfo.category,
           createdAt: Number(assetInfo.createdAt),
+          imageUrl: metadata?.image || metadata?.fileUrl || "",
           listing: {
             seller: listing.seller,
             active: listing.active,
@@ -364,7 +384,16 @@ export default function App() {
             return null;
           }
         })
-        .find((parsed) => parsed?.name === "TokenMinted");
+        .find((parsed) => parsed?.name === "TokenMinted") ||
+        mintReceipt.logs
+          .map((entry) => {
+            try {
+              return contract.interface.parseLog(entry);
+            } catch {
+              return null;
+            }
+          })
+          .find((parsed) => parsed?.name === "Transfer" && parsed?.args?.from === ethers.ZeroAddress);
 
       const tokenId = mintEvent?.args?.tokenId;
       if (!tokenId) {
@@ -554,6 +583,9 @@ export default function App() {
           <button type="button" onClick={connectWallet} disabled={isBusy}>
             {walletAddress ? "Reconnect" : "Connect Wallet"}
           </button>
+          <button type="button" onClick={disconnectWallet} disabled={isBusy || !walletAddress}>
+            Disconnect Wallet
+          </button>
           <button type="button" onClick={fundWalletForGas} disabled={isBusy || !walletAddress}>
             Fund Wallet (Dev)
           </button>
@@ -692,8 +724,8 @@ export default function App() {
               <div className="meta-line"><strong>File Hash:</strong> {asset.fileHash.slice(0, 16)}...</div>
               <div className="meta-line"><strong>Popularity:</strong> {asset.tradeCount} trades</div>
 
-              {asset.metadata?.fileUrl ? (
-                <a href={asset.metadata.fileUrl} target="_blank" rel="noreferrer">
+              {asset.imageUrl ? (
+                <a href={asset.imageUrl} target="_blank" rel="noreferrer">
                   View Uploaded File
                 </a>
               ) : null}

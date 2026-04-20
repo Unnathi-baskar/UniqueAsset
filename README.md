@@ -65,6 +65,24 @@ npm run dev --workspace @marketplace/api
 npm run dev --workspace @marketplace/web
 ```
 
+## MetaMask local network setup
+
+After starting the Hardhat node, add a custom network in MetaMask with:
+
+- Network name: Hardhat Local
+- Default RPC URL: `http://127.0.0.1:8545`
+- Chain ID: `31337`
+- Currency symbol: `ETH`
+- Block explorer URL: leave empty
+
+Then import one of the Hardhat test accounts using a private key shown in the `npm run node --workspace @marketplace/contracts` terminal output.
+
+Mobile wallet note:
+
+- If MetaMask is on your phone, `127.0.0.1` points to the phone, not your laptop.
+- Use your laptop LAN IP instead, for example: `http://192.168.1.10:8545`.
+- Keep the Hardhat node terminal running while using the app.
+
 ## Security and authenticity model
 
 - Uploaded files are hashed with SHA-256 to produce a deterministic file fingerprint.

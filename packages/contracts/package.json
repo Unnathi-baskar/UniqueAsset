@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "compile": "CI=true hardhat compile",
-    "test": "CI=true hardhat test",
-    "node": "CI=true hardhat node --hostname 0.0.0.0",
-    "deploy": "CI=true hardhat run scripts/deploy.js --network localhost"
+    "compile": "cross-env CI=true hardhat compile",
+    "test": "cross-env CI=true hardhat test",
+    "node": "cross-env CI=true hardhat node --hostname 0.0.0.0",
+    "deploy": "cross-env CI=true hardhat run scripts/deploy.js --network localhost"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.9.6",
@@ -14,6 +14,7 @@
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "cross-env": "^10.1.0",
     "hardhat": "^2.22.10"
   }
 }
