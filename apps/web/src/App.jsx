@@ -126,7 +126,7 @@ export default function App() {
       "Unknown wallet error";
 
     if (/insufficient funds/i.test(rawMessage)) {
-      return `${actionLabel}: Insufficient ETH on Hardhat Local. Click \"Fund Wallet (Dev)\" or import a funded Hardhat account in MetaMask.`;
+      return `${actionLabel}: Insufficient ETH on Hardhat Local. Import a funded Hardhat account in MetaMask.`;
     }
 
     return `${actionLabel}: ${rawMessage}`;
@@ -440,75 +440,6 @@ export default function App() {
     }
   }
 
-  async function fundWalletForGas() {
-    if (!walletAddress) {
-      setStatus("Connect wallet before requesting funds.");
-      return;
-    }
-
-    setIsBusy(true);
-    setStatus("Funding wallet with local test ETH...");
-
-    try {
-      const amountHex = "0x3635C9ADC5DEA00000";
-
-      let chainBalanceEth = "";
-
-      // First try funding through the same RPC MetaMask is currently using.
-      try {
-        await injectedProvider.request({
-          method: "hardhat_setBalance",
-          params: [walletAddress, amountHex]
-        });
-
-        const balanceHex = await injectedProvider.request({
-          method: "eth_getBalance",
-          params: [walletAddress, "latest"]
-        });
-
-        chainBalanceEth = ethers.formatEther(BigInt(balanceHex));
-      } catch {
-        // Fallback to API-funded local RPC path.
-        const response = await fetch(`${API_BASE_URL}/dev/fund-wallet`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ address: walletAddress, amountHex })
-        });
-
-        const payload = await response.json();
-        if (!response.ok) {
-          throw new Error(payload.error || "Wallet funding failed");
-        }
-
-        chainBalanceEth = payload.newBalanceEth || "";
-      }
-
-      const walletBalanceAfterFund = await refreshWalletBalance(walletAddress);
-
-      if (chainBalanceEth && walletBalanceAfterFund) {
-        const chainBalance = Number(chainBalanceEth);
-        const walletBalanceValue = Number(walletBalanceAfterFund);
-
-        if (Number.isFinite(chainBalance) && Number.isFinite(walletBalanceValue) && chainBalance > 0 && walletBalanceValue === 0) {
-          setStatus(
-            "Wallet funded on local RPC, but connected MetaMask RPC still shows 0 ETH. In MetaMask, edit Hardhat Local to RPC http://127.0.0.1:8545 and chain ID 31337, then reconnect."
-          );
-          return;
-        }
-      }
-
-      setStatus(
-        `Wallet funded. Current local balance: ${formatEthDisplay(chainBalanceEth || walletBalanceAfterFund)} ETH.`
-      );
-    } catch (error) {
-      setStatus(`Funding failed: ${error.message}`);
-    } finally {
-      setIsBusy(false);
-    }
-  }
-
   async function cancelListing(tokenId) {
     setIsBusy(true);
     setStatus(`Cancelling listing for token #${tokenId}...`);
@@ -585,9 +516,6 @@ export default function App() {
           </button>
           <button type="button" onClick={disconnectWallet} disabled={isBusy || !walletAddress}>
             Disconnect Wallet
-          </button>
-          <button type="button" onClick={fundWalletForGas} disabled={isBusy || !walletAddress}>
-            Fund Wallet (Dev)
           </button>
         </div>
       </section>
